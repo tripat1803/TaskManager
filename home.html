@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./assets/css/home.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body style="user-select: none;" class="">
+    <header class="flex justify-center drop-shadow-md bg-white">
+        <div class="w-full max-w-[1300px] px-8 py-3 flex justify-between items-center gap-10">
+            <h2 class="text-xl font-semibold text-[#8247F5]">TodoManager</h2>
+            <div class="flex gap-6 items-center">
+                <div class="w-8 h-8 rounded-full flex justify-center items-center border-2 bg-[#CCCCCC]">
+                    <p id="user-profile" class="text-[rgb(0,0,0,0.7)]"></p>
+                </div>
+                <button id="signout"><i class="fa-solid fa-arrow-right-from-bracket"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <section class="flex justify-center">
+        <div class="w-full max-w-[1300px] px-8 py-3 flex flex-col gap-10">
+            <div class="flex justify-between items-center">
+                <div class="w-[45%] border flex items-center bg-white">
+                    <input id="search-bar" placeholder="Search tasks here!" type="text" class="px-3 py-1.5 outline-none flex-1">
+                    <div class="h-full py-2 px-3 border-l">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+                </div>
+            </div>
+            <div id="all-tasks-container" class="flex gap-4 overflow-x-scroll remove-scroll">
+                <!-- Task Listing -->
+                <div id="all-tasks" class="flex flex-wrap gap-2">
+                </div>
+
+                <!-- Add Category -->
+                <div id="add-category"
+                    class="hidden bg-[#F4F5F7] min-w-[280px] max-w-[300px] min-h-[200px] rounded-lg py-2 px-1 flex flex-col">
+                    <div class="py-3 flex">
+                        <input id="category"
+                            class="flex-1 px-1.5 py-2 bg-white mx-2 bg-gray-300 text-gray-800 rounded-sm font-medium text-sm w-[max-content]">
+                    </div>
+                    <div class="w-full flex gap-3 justify-end">
+                        <button id="accept-category"
+                            class="py-1 px-3 bg-white border rounded-sm drop-shadow-md hover:bg-[whitesmoke]">
+                            <i class="fa-solid fa-check"></i>
+                        </button>
+                        <button id="close-category"
+                            class="py-1 px-3 bg-white border rounded-sm drop-shadow-md hover:bg-[whitesmoke]">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                    <div class="flex-1 flex flex-col min-h-[280px] max-h-[50vh] overflow-y-scroll remove-scroll"></div>
+                    <!-- <div class="py-3">
+                        <button onmousedown="buttonDown(event)"
+                            class="create-task px-2 py-1 rounded-sm w-full text-md text-left hover:bg-[rgb(66,82,110,0.1)] text-[rgb(66,82,110)]">
+                            <i class="fa-solid fa-plus mr-1"></i>
+                            <span>Create</span>
+                        </button>
+                    </div> -->
+                </div>
+                <button id="add-stage" onmousedown="buttonDown(event)"
+                    class="create-task py-2 px-3 rounded-lg bg-[#F4F5F7] h-[max-content] hover:bg-[rgb(66,82,110,0.1)] text-[rgb(66,82,110)]">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <section id="add-task-container" class="hidden fixed w-[50%] max-w-[600px] top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] z-[13]">
+        <div class="w-full bg-white p-6 rounded shadow-lg w-1/2">
+            <h2 class="text-xl font-semibold mb-4">Create Event</h2>
+            <label for="title" class="block mb-2">Title:</label>
+            <input type="text" id="title" class="w-full p-2 border rounded">
+            <label for="description" class="block mb-2">Description:</label>
+            <input type="text" id="description" class="w-full p-2 border rounded">
+            <label for="startDate" class="block mt-4 mb-2">Start Date:</label>
+            <input type="date" id="startDate" class="w-full p-2 border rounded">
+            <label for="endDate" class="block mt-4 mb-2">End Date:</label>
+            <input type="date" id="endDate" class="w-full p-2 border rounded">
+            <button id="saveEvent" class="mt-6 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded">Save</button>
+        </div>
+    </section>
+    <div id="black-screen" class="hidden fixed top-0 left-0 w-screen h-screen bg-[rgb(0,0,0,0.2)]"></div>
+
+    <script>
+        function buttonDown(event) {
+            event.target.style.color = "#0052CC";
+            event.target.style.background = "rgb(0,82,204,0.1)";
+        }
+    </script>
+    <script src="https://kit.fontawesome.com/cd2d1bf8ae.js" crossorigin="anonymous"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.3.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.3.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.3.0/firebase-auth-compat.js"></script>
+    <script type="module" src="./assets/js/firebase.js"></script>
+    <script type="module" src="./assets/js/EmailAuth.js"></script>
+    <script src="./assets/js/home.js"></script>
+    <script>
+        window.addEventListener("mouseup", () => {
+            document.querySelectorAll(".create-task").forEach(element => {
+                element.style.color = "rgb(66,82,110)";
+                element.style.background = "";
+            });
+        });
+    </script>
+    <script>
+        function openPopup(){
+            document.getElementById("add-task-container").classList.remove("hidden");
+            document.getElementById("black-screen").classList.remove("hidden");
+        }
+    </script>
+    <script type="module">
+        function signout() {
+            firebase.auth().signOut().then(() => {
+                window.location.href = "index.html";
+            }).catch((error) => {
+                // var errorCode = error.code;
+                var errorMessage = error.message;
+                console.log(errorMessage);
+            });
+        }
+        document.getElementById("signout").addEventListener("click", signout);
+    </script>
+</body>
+
+</html>

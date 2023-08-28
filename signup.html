@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body>
+    <div class="min-h-screen flex">
+        <div class="hidden md:block flex-1 border-2"></div>
+        <div class="flex-1 flex justify-center items-center relative">
+            <div class="w-[90%] sm:w-[75%] lg:w-[65%] flex flex-col justify-center items-center">
+                <h2 class="font-semibold text-3xl text-gray-700 mb-2">Hello Again!</h1>
+                    <p class="text-center mb-8 max-w-[85%]">Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+                        eiusmod
+                        tempor incididunt ut labore.</p>
+                    <div class="w-[80%] flex flex-col">
+                        <input id="fullname" type="text" placeholder="Full name"
+                            class="px-3 py-2 w-full outline-none border mb-5">
+                        <input id="email" type="text" placeholder="E-mail"
+                            class="px-3 py-2 w-full outline-none border mb-5">
+                        <input id="password" type="password" placeholder="Password"
+                            class="px-3 w-full py-2 outline-none border mb-5">
+                        <button id="signup" class="bg-[#365AC0] w-full py-2 text-white rounded-lg mb-5">Sign Up</button>
+                    </div>
+            </div>
+            <div class="absolute bottom-6 flex gap-2 items-center text-sm">
+                <p>Already have an account?</p>
+                <a href="./index.html" class="text-[#365AC0] font-bold">Sign in</a>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://kit.fontawesome.com/cd2d1bf8ae.js" crossorigin="anonymous"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.3.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.3.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.3.0/firebase-auth-compat.js"></script>
+    <script type="module" src="./assets/js/firebase.js"></script>
+    <script>
+        window.onload = () => {
+            firebase.auth().onAuthStateChanged(function (user) {
+                if (user) {
+                    window.location.href = "./home.html"
+                }
+            });
+        }
+    </script>
+    <script type="module">
+        function signup() {
+            let email = document.getElementById("email").value;
+            let password = document.getElementById("password").value;
+
+            if (email !== "" && password !== "") {
+                firebase.auth().createUserWithEmailAndPassword(email, password).then((userCredential) => {
+                    var user = userCredential.user;
+                    window.location.href = "home.html";
+                    document.getElementById("email").value = "";
+                    document.getElementById("password").value = "";
+                }).catch((error) => {
+                    // var errorCode = error.code;
+                    var errorMessage = error.message;
+                    console.log(errorMessage);
+                    document.getElementById("email").value = "";
+                    document.getElementById("password").value = "";
+                });
+            }
+        }
+        document.getElementById("signup").addEventListener("click", signup);
+    </script>
+</body>
+
+</html>
