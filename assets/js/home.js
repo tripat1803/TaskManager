@@ -17,11 +17,21 @@ window.onload = () => {
     });
     data.forEach(task => {
         document.querySelectorAll(".task-listing").forEach((item) => {
-            if(item.querySelector("p").innerText.toLowerCase() === task.category.toLowerCase()){
-                item.querySelector(".category-tasks").innerHTML += taskData(task.title, task.description, task.endDate);
+            if (item.querySelector("p").innerText.toLowerCase() === task.category.toLowerCase()) {
+                item.querySelector(".category-tasks").appendChild(taskData(data.indexOf(task), task.title, task.description, task.endDate));
             }
         });
     });
+
+    // document.querySelectorAll(".task-item").forEach((item) => {
+    //     item.addEventListener("mousedown", (e) => {
+    //         console.log(e.clientX, e.clientY);
+    //         e.target.style.position = "absolute";
+    //     });
+    //     document.addEventListener("mouseup", (e) => {
+    //         item.style.position = "static";
+    //     });
+    // });
 }
 
 document.getElementById("saveEvent").addEventListener("click", function () {
@@ -47,14 +57,14 @@ document.getElementById("search-bar").addEventListener("change", () => {
     document.querySelectorAll(".task-listing").forEach((item) => {
         item.querySelector(".flex-1").innerHTML = "";
         filteredData.forEach((task) => {
-            item.querySelector(".category-tasks").innerHTML += taskData(task.title, task.description, task.endDate);
+            item.querySelector(".category-tasks").appendChild(taskData(data.indexOf(task), task.title, task.description, task.endDate));
         });
     });
 });
 
 
 // Functions
-function closeTaskPopup(){
+function closeTaskPopup() {
     document.getElementById("add-task-container").classList.add("hidden");
     document.getElementById("black-screen").classList.add("hidden");
 }
@@ -69,7 +79,7 @@ function createCategory(category) {
     document.getElementById("all-tasks").innerHTML += categoryData(category);
 }
 
-function createTask(category="to do") {
+function createTask(category = "to do") {
     if (!categoryArr.includes(category)) {
         alert("Category does not exist");
         return;
@@ -87,20 +97,26 @@ function createTask(category="to do") {
         endDate: endDate,
         category: category
     };
+
+    if(data.includes(task)){
+        alert("Task already exists");
+        return;
+    }
+
     data.push(task);
     window.localStorage.setItem("data", JSON.stringify(data));
     filterData(category);
 }
 
-function filterData(category){
+function filterData(category) {
     let filteredData = data.filter((item) => {
         return item.category === category;
     });
     document.querySelectorAll(".task-listing").forEach((item) => {
-        if(item.querySelector("p").innerText.toLowerCase() === category.toLowerCase()){
+        if (item.querySelector("p").innerText.toLowerCase() === category.toLowerCase()) {
             item.querySelector(".flex-1").innerHTML = "";
-            filteredData.forEach((task) => {
-                item.querySelector(".category-tasks").innerHTML += taskData(task.title, task.description, task.endDate);
+            filteredData.forEach((task, index) => {
+                item.querySelector(".category-tasks").appendChild(taskData(data.indexOf(task), task.title, task.description, task.endDate));
             });
         }
     });
@@ -125,7 +141,7 @@ function categoryData(category) {
         </div>
     </div>`
     } else {
-        return `<div class="bg-[#F4F5F7] min-w-[280px] max-w-[300px] min-h-[200px] rounded-lg py-2 px-1 flex flex-col">
+        return `<div class="task-listing bg-[#F4F5F7] min-w-[280px] max-w-[300px] min-h-[200px] rounded-lg py-2 px-1 flex flex-col">
         <div class="py-3">
             <p class="px-1.5 mx-2 bg-gray-300 text-gray-800 rounded-sm font-medium text-sm w-[max-content] capitalize">
                 ${category}
@@ -136,19 +152,60 @@ function categoryData(category) {
     </div>`
     }
 }
-function taskData(task, description, date) {
-    return `<div
-    class="h-[max-content] flex flex-col gap-2 bg-white drop-shadow-md rounded-md px-3 py-2 my-2">
-    <p class="text-md">${description}</p>
-    <div class="flex gap-2">
-        <p
-            class="px-1 text-[13px] rounded-sm font-bold w-[max-content] bg-[rgb(131,73,245,0.1)] text-[rgb(131,73,245)]">
-            ${task}
-        </p>
-        <p
-            class="px-1 text-[13px] rounded-sm font-bold w-[max-content] bg-[rgb(222,53,11,0.1)] text-[rgb(222,53,11)]">
-            <i class="fa-regular fa-clock text-[12px]"></i> ${date}
-        </p>
-    </div>
-</div>`
+function taskData(index, task, description, date) {
+    const taskItem = document.createElement('div');
+    taskItem.classList.add('task-item', 'h-[max-content]', 'flex', 'flex-col', 'gap-2', 'bg-white', 'drop-shadow-md', 'rounded-md', 'px-3', 'py-2', 'my-2');
+
+    // Create the description paragraph
+    const descriptionParagraph = document.createElement('p');
+    descriptionParagraph.classList.add('text-md');
+    descriptionParagraph.textContent = `${description}`;
+    taskItem.appendChild(descriptionParagraph);
+
+    // Create the flex container for task and date
+    const flexContainer = document.createElement('div');
+    flexContainer.classList.add('flex', 'gap-2');
+    taskItem.appendChild(flexContainer);
+
+    // Create the task paragraph
+    const taskParagraph = document.createElement('p');
+    taskParagraph.classList.add('px-1', 'text-[13px]', 'rounded-sm', 'font-bold', 'w-[max-content]', 'bg-[rgb(131,73,245,0.1)]', 'text-[rgb(131,73,245)]');
+    taskParagraph.textContent = `${task}`;
+    flexContainer.appendChild(taskParagraph);
+
+    // Create the date paragraph
+    const dateParagraph = document.createElement('p');
+    dateParagraph.classList.add('px-1', 'text-[13px]', 'rounded-sm', 'font-bold', 'w-[max-content]', 'bg-[rgb(222,53,11,0.1)]', 'text-[rgb(222,53,11)]');
+    dateParagraph.innerHTML = `<i class="fa-regular fa-clock text-[12px]"></i> ${date}`;
+    flexContainer.appendChild(dateParagraph);
+
+    // Create the flex container for icons
+    const iconFlexContainer = document.createElement('div');
+    iconFlexContainer.classList.add('flex', 'gap-2', 'justify-end');
+    taskItem.appendChild(iconFlexContainer);
+
+    // Create the edit icon
+    const editIcon = document.createElement('i');
+    editIcon.classList.add('fa-solid', 'fa-pen-to-square', 'cursor-pointer', 'text-[blue]', 'text-xs');
+    iconFlexContainer.appendChild(editIcon);
+
+    // Create the delete icon
+    const deleteIcon = document.createElement('i');
+    deleteIcon.classList.add('fa-solid', 'fa-trash', 'cursor-pointer', 'text-[red]', 'text-xs');
+    iconFlexContainer.appendChild(deleteIcon);
+
+    deleteIcon.addEventListener("click", () => {
+        deleteData(index);
+    });    
+
+    return taskItem;
+}
+
+function deleteData(index){
+    data.filter((item, point) => {
+        return point !== index;
+    });
+    console.log(index, data);
+    window.localStorage.setItem("data", JSON.stringify(data));
+    // window.location.reload();
 }
